@@ -3,119 +3,248 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sisay Alem - Video Editor & Thumbnail Designer</title>
+  <title>Sisay Alem - Creative Video Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@heroicons/react@2.0.18/outline/index.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f4f4;
-      color: #333;
+      font-family: 'Poppins', sans-serif;
     }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 2rem;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
-    h1, h2, h3 {
-      color: #111;
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
-    a {
-      color: #007BFF;
-      text-decoration: none;
+    .dark-mode-toggle {
+      transition: all 0.3s ease;
     }
-    .section {
-      margin-bottom: 2rem;
+    .hero-bg {
+      background: linear-gradient(135deg, #1f2937 0%, #ef4444 100%);
+      position: relative;
+      overflow: hidden;
     }
-    .badge {
-      background: #007BFF;
-      color: white;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.9rem;
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='20' width='40' height='10' fill='%23ffffff' opacity='0.1'/%3E%3Crect x='15' y='35' width='30' height='10' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
+      animation: slide 20s linear infinite;
     }
-    ul {
-      padding-left: 1.5rem;
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-60px); }
     }
-    blockquote {
-      font-style: italic;
-      color: #666;
-      margin: 1rem 0;
-      padding-left: 1rem;
-      border-left: 4px solid #007BFF;
+    .section-bg {
+      background: linear-gradient(to bottom, #111827 0%, #1f2937 100%);
+    }
+    .headshot {
+      border: 4px solid white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <header class="section">
-      <h1>Sisay Alem <span class="badge">Video Editor & Thumbnail Designer</span></h1>
-      <p>📍 Addis Ababa, Ethiopia | 🌐 <a href="https://www.upwork.com/freelancers/sisayalem" target="_blank">Upwork Profile</a></p>
-      <p>📧 sisayalem@email.com | 📱 +251-9XX-XXX-XXX | YouTube: @SisayAlem</p>
-    </header>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Dark/Light Mode Toggle -->
+  <button id="theme-toggle" class="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 dark-mode-toggle z-50" aria-label="Toggle dark mode">
+    <svg class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+    </svg>
+  </button>
 
-    <section class="section">
-      <h2>🎥 About Me</h2>
-      <p>I’m a creative video editor and thumbnail designer with a strong track record of delivering engaging content that drives views and conversions. With several successful projects on <strong>Upwork</strong>, I specialize in YouTube content, social media edits, cinematic cuts, and scroll-stopping thumbnails.</p>
-    </section>
+  <!-- Hero Section -->
+  <section class="hero-bg min-h-screen flex items-center justify-center py-12">
+    <div class="container mx-auto px-4 text-center fade-in relative z-10">
+      <img src="6030555592130676104 (2).jpg" alt="Sisay Alem Headshot" class="w-32 h-32 md:w-48 md:h-48 rounded-full mx-auto mb-6 headshot">
+      <h1 class="text-5xl md:text-6xl font-bold text-white mb-4">Sisay Alem</h1>
+      <p class="text-xl md:text-2xl text-gray-200 mb-6">Creative Video Editor & YouTube Content Creator</p>
+      <a href="#portfolio" class="inline-block bg-red-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-red-600 transition-colors">Watch My Work</a>
+    </div>
+  </section>
 
-    <section class="section">
-      <h2>🧰 Skills</h2>
-      <ul>
-        <li>✂️ Video Editing: YouTube, TikTok, Reels, Promos</li>
-        <li>🎨 Thumbnail Design: CTR-optimized using Photoshop & Canva</li>
-        <li>📊 Content Optimization: Hook creation, pacing, storytelling</li>
-        <li>💬 Client Communication: Clear updates, fast response, revisions</li>
-      </ul>
-    </section>
+  <!-- About Me Section -->
+  <section id="about" class="py-16 section-bg">
+    <div class="container mx-auto px-4 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">About Me</h2>
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-lg mb-4">
+          I'm Sisay Alem, a passionate video editor and YouTube content creator with over 5 years of experience crafting engaging visual stories. My expertise lies in transforming raw footage into polished, high-impact videos that captivate audiences.
+        </p>
+        <p class="text-lg mb-4">
+          I specialize in YouTube video editing, motion graphics, and short-form content like Reels and Shorts. Using tools like Adobe Premiere Pro, After Effects, and CapCut, I bring creativity and precision to every project, ensuring your vision comes to life.
+        </p>
+        <p class="text-lg">
+          My approach is collaborative and client-focused, delivering videos that align with your brand and goals. Let’s create something unforgettable together!
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <section class="section">
-      <h2>🧪 Tools I Use</h2>
-      <ul>
-        <li>Adobe Premiere Pro</li>
-        <li>Adobe After Effects</li>
-        <li>Photoshop</li>
-        <li>CapCut / DaVinci Resolve</li>
-        <li>Canva Pro</li>
-      </ul>
-    </section>
+  <!-- Services Section -->
+  <section id="services" class="py-16">
+    <div class="container mx-auto px-4 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold mb-4">YouTube Video Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Professional editing for YouTube videos, including cuts, transitions, and sound design to boost engagement.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold mb-4">Thumbnail Design</h3>
+          <p class="text-gray-600 dark:text-gray-300">Eye-catching, click-worthy thumbnails designed to increase your video’s click-through rate.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold mb-4">Reels/Shorts Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Fast-paced, engaging edits for Instagram Reels, TikTok, and YouTube Shorts.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold mb-4">Motion Graphics</h3>
+          <p class="text-gray-600 dark:text-gray-300">Dynamic animations and visual effects to elevate your videos.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold mb-4">Freelance Promo Videos</h3>
+          <p class="text-gray-600 dark:text-gray-300">Custom promotional videos for businesses, products, or personal brands.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section class="section">
-      <h2>🌟 Upwork Experience</h2>
-      <ul>
-        <li>✅ 50+ Completed Projects</li>
-        <li>⭐ 5.0 Star Rating</li>
-        <li>💼 Niche: YouTube Automation, Vlogs, Tutorials, Motivational Videos</li>
-        <li>🧑‍💻 Clients from: USA 🇺🇸, UK 🇬🇧, Canada 🇨🇦, UAE 🇦🇪</li>
-      </ul>
-      <blockquote>“Sisay is incredibly fast and creative! My video blew up after using his thumbnail.”<br>— Top-rated Upwork Client</blockquote>
-    </section>
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="py-16 section-bg">
+    <div class="container mx-auto px-4 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/LtUJMvQv9TE" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Dynamic YouTube Vlog</h3>
+            <p class="text-gray-600 dark:text-gray-300">A high-energy vlog edited with Adobe Premiere Pro, featuring seamless transitions and vibrant color grading. Client goal: Engage a travel audience.</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/QvYLc1nEo2U" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Creative Short-Form Video</h3>
+            <p class="text-gray-600 dark:text-gray-300">A fast-paced YouTube Short edited in CapCut with motion graphics from After Effects. Designed to maximize viewer retention on social platforms.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section class="section">
-      <h2>📂 Portfolio Highlights</h2>
-      <h3>🎬 Video Projects</h3>
-      <ul>
-        <li>YouTube Automation Channel – 200k+ views</li>
-        <li>Motivational Reels – Fast-paced, dynamic transitions</li>
-        <li>Educational Explainers – Clarity-focused, clean edits</li>
-      </ul>
-      <h3>📸 Thumbnails</h3>
-      <ul>
-        <li>CTR Boosted Thumbnails – From 3% to 11%</li>
-        <li>Before & After Results – Visual proof of improvement</li>
-        <li>Custom Designs – Tailored to your niche</li>
-      </ul>
-      <p><a href="#">🔗 View Full Portfolio</a> | <a href="#">📎 Download PDF Version</a></p>
-    </section>
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-16">
+    <div class="container mx-auto px-4 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">Testimonials</h2>
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="relative">
+          <div id="testimonial-slider" class="space-y-8">
+            <div class="testimonial">
+              <p class="text-lg italic text-gray-600 dark:text-gray-300">"Sisay’s editing took my YouTube channel to the next level. His attention to detail and creative flair are unmatched!"</p>
+              <p class="mt-4 font-semibold">– Alex M., YouTube Creator</p>
+            </div>
+            <div class="testimonial hidden">
+              <p class="text-lg italic text-gray-600 dark:text-gray-300">"The promo video Sisay created for my business was professional and engaging. Highly recommend!"</p>
+              <p class="mt-4 font-semibold">– Sarah K., Small Business Owner</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section class="section">
-      <h2>📢 Let’s Work Together</h2>
-      <p>If you’re looking for an editor who cares about your content like it’s their own, I’m your guy. Reach out for collaborations or custom packages.</p>
-      <p>📩 Email me: <a href="mailto:sisayalem@email.com">sisayalem@email.com</a><br>
-      🔗 Hire me on Upwork: <a href="https://www.upwork.com/freelancers/sisayalem" target="_blank">upwork.com/freelancers/sisayalem</a><br>
-      📱 Telegram: @Sis21Ale</p>
-    </section>
-  </div>
-</body>
-</html>
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 section-bg">
+    <div class="container mx-auto px-4 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">Get in Touch</h2>
+      <div class="max-w-lg mx-auto">
+        <div hx-post="/submit" hx-swap="outerHTML" class="space-y-4">
+          <div>
+            <label for="name" class="block text-sm font-medium">Name</label>
+            <input type="text" id="name" name="name" class="w-full p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500" required>
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium">Email</label>
+            <input type="email" id="email" name="email" class="w-full p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500" required>
+          </div>
+          <div>
+            <label for="project" class="block text-sm font-medium">Project Type</label>
+            <select id="project" name="project" class="w-full p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+              <option>YouTube Video Editing</option>
+              <option>Thumbnail Design</option>
+              <option>Reels/Shorts Editing</option>
+              <option>Motion Graphics</option>
+              <option>Freelance Promo Videos</option>
+            </select>
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium">Message</label>
+            <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500" required></textarea>
+          </div>
+          <button type="submit" class="w-full bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors">Send Message</button>
+        </div>
+      </div>
+      <div class="flex justify-center space-x-6 mt-8">
+        <a href="https://youtube.com" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-red-500">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1.1-1.8-2.1-2.1C19.3 3.5 12 3.5 12 3.5s-7.3 0-9.4.6c-1 .3-1.8 1.1-2.1 2.1C0 8.4 0 12 0 12s0 3.6.5 5.8c.3 1 1.1 1.8 2.1 2.1 2.1.6 9.4.6 9.4.6s7.3 0 9.4-.6c1-.3 1.8-1.1 2.1-2.1.5-2.2.5-5.8.5-5.8s0-3.6-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/></svg>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-red-500">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.2A1.8 1.8 0 114.7 6.4a1.8 1.8 0 011.8 1.8zM19 19h-3v-4.6c0-1.1-.4-1.9-1.4-1.9-.8 0-1.2.5-1.4 1V19h-3v-9h3v1.2c.4-.6 1.1-1.4 2.7-1.4 2 0 3.4 1.3 3.4 4z"/></svg>
+        </a>
+        <a href="https://telegram.org" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-red-500">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.6 7.4l-1.7 8c-.1.4-.5.6-.9.4l-2.3-1.7-1.3.8c-.2.1-.4.1-.6-.1l.9-3.1 5.7-5.2c.4-.3.1-.8-.4-.5l-7 5-2.3-2.3c-.3-.3-.1-.8.3-.9l9.3-3.6c.4-.1.8.2.8.7z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-6 bg-gray-900 text-gray-400 text-center">
+    <p>© 2025 Sisay Alem. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Dark/Light Mode Toggle
+    const toggleButton = document.getElementById('theme-toggle');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Load theme from localStorage
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    // Fade-in animations on scroll
+    const fadeIns = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeIns.forEach(element => observer.observe(element));
+
+    // Testimonial Slider
+    const testimonials = document.querySelectorAll('.testimonial');
+    let current = 0;
+    setInterval(() => {
+      testimonials[current].classList.add('hidden');
+      current = (current + 1) % testimonials.length;
+      testimonials[current].classList.remove('hidden');
+    }, 5000);
+  </script>
