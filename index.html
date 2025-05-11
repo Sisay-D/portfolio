@@ -37,9 +37,30 @@
       animation: slide 30s linear infinite;
       z-index: 1;
     }
-    @keyframes slide {
-      0% { transform: translateX(0) translateY(0); }
-      100% { transform: translateX(-100px) translateY(-100px); }
+    .name-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .name-text {
+      position: absolute;
+      color: rgba(248, 250, 252, 0.15);
+      font-size: 1.5rem;
+      font-weight: 300;
+      white-space: nowrap;
+      animation: drift 20s linear infinite, fade 5s ease-in-out infinite alternate;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, 50px); }
+    }
+    @keyframes fade {
+      0% { opacity: 0.15; }
+      100% { opacity: 0.05; }
     }
     .particle-canvas {
       position: absolute;
@@ -47,11 +68,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 2;
-    }
-    .hero-content {
-      position: relative;
       z-index: 3;
+    }
+    .hero-content, .services-content {
+      position: relative;
+      z-index: 4;
     }
     .headshot {
       border: 6px solid #f8fafc;
@@ -70,6 +91,31 @@
     @keyframes slideIn {
       0% { opacity: 0; transform: translateY(50px); }
       100% { opacity: 1; transform: translateY(0); }
+    }
+    .services-bg {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .services-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' opacity='0.15'%3E%3Cpath fill='%2306b6d4' d='M50 50l20 20-20 20 20-20 20 20-20-20 20-20-20 20z'/%3E%3Cpath fill='%23f43f5e' d='M200 80l-40 40 40 40-40-40-40 40 40-40-40-40 40 40z'/%3E%3Ccircle cx='250' cy='50' r='15' fill='%231e3a8a'/%3E%3Crect x='30' y='250' width='80' height='15' fill='%2306b6d4'/%3E%3Cpath fill='%23f43f5e' d='M150 200l20-40h40l20 40z'/%3E%3C/svg%3E");
+      animation: float-bg 25s linear infinite;
+      z-index: 1;
+    }
+    @keyframes slide {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-100px) translateY(-100px); }
+    }
+    @keyframes float-bg {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
     }
     .section-bg {
       background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
@@ -117,6 +163,9 @@
     .dark .card {
       background: #1e293b;
     }
+    .dark .services-bg {
+      background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+    }
     .dark .input-field {
       background: #1e293b;
       border-color: #4b5563;
@@ -150,6 +199,17 @@
   <!-- Hero Section -->
   <section class="hero-bg min-h-screen flex items-center justify-center py-16">
     <canvas class="particle-canvas"></canvas>
+    <div class="name-overlay">
+      <span class="name-text" style="top: 10%; left: 5%; animation-delay: 0s;">Sisay Derese</span>
+      <span class="name-text" style="top: 20%; left: 60%; animation-delay: 2s;">Sisay Derese</span>
+      <span class="name-text" style="top: 30%; left: 20%; animation-delay: 4s;">Sisay Derese</span>
+      <span class="name-text" style="top: 40%; left: 80%; animation-delay: 6s;">Sisay Derese</span>
+      <span class="name-text" style="top: 50%; left: 10%; animation-delay: 8s;">Sisay Derese</span>
+      <span class="name-text" style="top: 60%; left: 70%; animation-delay: 10s;">Sisay Derese</span>
+      <span class="name-text" style="top: 70%; left: 30%; animation-delay: 12s;">Sisay Derese</span>
+      <span class="name-text" style="top: 80%; left: 90%; animation-delay: 14s;">Sisay Derese</span>
+      <span class="name-text" style="top: 90%; left: 40%; animation-delay: 16s;">Sisay Derese</span>
+    </div>
     <div class="container mx-auto px-6 text-center hero-content fade-in">
       <img src="6030555592130676104 (2).jpg" alt="Sisay Derese Headshot" class="w-40 h-40 md:w-56 md:h-56 rounded-full mx-auto mb-8 headshot">
       <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 hero-text">Sisay Derese</h1>
@@ -177,10 +237,9 @@
   </section>
 
   <!-- Services Section -->
-  <section id="services" class="py-20 bg-gray-50 dark:bg-gray-800">
-    <div class="container mx-auto px-6 fade-in">
+  <section id="services" class="py-20 services-bg dark:bg-gray-800">
+    <div class="container mx-auto px-6 fade-in services-content">
       <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Services</h2>
-      Goodbye
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">YouTube Video Editing</h3>
@@ -267,7 +326,7 @@
             <input type="email" id="email" name="email" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
           </div>
           <div>
-            <label for="project" class="block text-sm font-medium text-gray-300">Project Geleba Type</label>
+            <label for="project" class="block text-sm font-medium text-gray-300">Project Type</label>
             <select id="project" name="project" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none">
               <option>YouTube Video Editing</option>
               <option>Thumbnail Design</option>
