@@ -22,9 +22,9 @@
       transform: translateY(0);
     }
     .hero-bg {
-      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
       position: relative;
       overflow: hidden;
+      background: linear-gradient(135deg, #1e3a8a 0%, #06b6d4 100%);
     }
     .hero-bg::before {
       content: '';
@@ -33,49 +33,103 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='20' width='40' height='10' fill='%23ffffff' opacity='0.1'/%3E%3Crect x='15' y='35' width='30' height='10' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
-      animation: slide 20s linear infinite;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' opacity='0.1'%3E%3Cpath fill='%23f8fafc' d='M50 50l50 50-50 50 50-50 50 50-50-50 50-50-50 50z'/%3E%3Ccircle cx='150' cy='50' r='10' fill='%23f8fafc'/%3E%3Crect x='20' y='180' width='60' height='10' fill='%23f8fafc'/%3E%3C/svg%3E");
+      animation: slide 30s linear infinite;
+      z-index: 1;
     }
     @keyframes slide {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-60px); }
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-100px) translateY(-100px); }
+    }
+    .particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+    }
+    .headshot {
+      border: 6px solid #f8fafc;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+    .hero-text {
+      animation: slideIn 1s ease-out;
+    }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
     .section-bg {
       background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
     }
-    .headshot {
-      border: 6px solid #ffffff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-    }
-    .headshot:hover {
-      transform: scale(1.05);
+    .nav-bg {
+      background: #f8fafc;
     }
     .nav-link {
       transition: color 0.3s ease;
     }
     .nav-link:hover {
-      color: #3b82f6;
+      color: #06b6d4;
     }
     .card {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #ffffff;
     }
     .card:hover {
       transform: translateY(-8px);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
     .btn-primary {
+      background-color: #f43f5e;
       transition: background-color 0.3s ease, transform 0.3s ease;
     }
     .btn-primary:hover {
-      background-color: #2563eb;
+      background-color: #e11d48;
       transform: translateY(-2px);
+    }
+    .accent-text {
+      color: #06b6d4;
+    }
+    .input-field {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+    .dark .nav-bg {
+      background: #1e293b;
+    }
+    .dark .card {
+      background: #1e293b;
+    }
+    .dark .input-field {
+      background: #1e293b;
+      border-color: #4b5563;
+    }
+    .dark .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
     }
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
   <!-- Navigation Bar -->
-  <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+  <nav class="nav-bg dark:bg-gray-800 shadow-lg sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <a href="#" class="text-2xl font-bold text-gray-900 dark:text-white">Sisay Derese</a>
       <div class="space-x-6">
@@ -95,11 +149,12 @@
 
   <!-- Hero Section -->
   <section class="hero-bg min-h-screen flex items-center justify-center py-16">
-    <div class="container mx-auto px-6 text-center fade-in relative z-10">
+    <canvas class="particle-canvas"></canvas>
+    <div class="container mx-auto px-6 text-center hero-content fade-in">
       <img src="6030555592130676104 (2).jpg" alt="Sisay Derese Headshot" class="w-40 h-40 md:w-56 md:h-56 rounded-full mx-auto mb-8 headshot">
-      <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">Sisay Derese</h1>
-      <p class="text-lg md:text-2xl text-gray-100 mb-8">Creative Video Editor & YouTube Content Creator</p>
-      <a href="#portfolio" class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full font-semibold btn-primary">View My Work</a>
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 hero-text">Sisay Derese</h1>
+      <p class="text-lg md:text-2xl text-gray-100 mb-8 hero-text">Creative <span class="accent-text">Video Editor</span> & YouTube Content Creator</p>
+      <a href="#portfolio" class="inline-block btn-primary text-white px-8 py-3 rounded-full font-semibold">View My Work</a>
     </div>
   </section>
 
@@ -109,13 +164,13 @@
       <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">About Me</h2>
       <div class="max-w-4xl mx-auto text-center">
         <p class="text-lg text-gray-300 mb-6 leading-relaxed">
-          I'm Sisay Derese, a dedicated video editor and YouTube content creator with over 5 years of experience crafting compelling visual stories. My expertise lies in transforming raw footage into polished, high-impact videos that captivate audiences worldwide.
+          I'm Sisay Derese, a dedicated <span class="accent-text">video editor</span> and YouTube content creator with over 5 years of experience crafting compelling visual stories. My expertise lies in transforming raw footage into polished, high-impact videos that captivate audiences worldwide.
         </p>
         <p class="text-lg text-gray-300 mb-6 leading-relaxed">
-          Specializing in YouTube video editing, motion graphics, and short-form content like Reels and Shorts, I leverage tools like Adobe Premiere Pro, After Effects, and CapCut to deliver creative and precise results. My work is driven by a passion for storytelling and a commitment to excellence.
+          Specializing in YouTube video editing, motion graphics, and short-form content like Reels and Shorts, I leverage tools like Adobe Premiere Pro, After Effects, and CapCut to deliver <span class="accent-text">creative and precise</span> results. My work is driven by a passion for storytelling and a commitment to excellence.
         </p>
         <p class="text-lg text-gray-300 leading-relaxed">
-          I take a collaborative, client-focused approach, ensuring every project aligns with your brand and vision. Let’s create something extraordinary together!
+          I take a collaborative, client-focused approach, ensuring every project aligns with your brand and vision. Let’s create something <span class="accent-text">extraordinary</span> together!
         </p>
       </div>
     </div>
@@ -125,24 +180,25 @@
   <section id="services" class="py-20 bg-gray-50 dark:bg-gray-800">
     <div class="container mx-auto px-6 fade-in">
       <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Services</h2>
+      Goodbye
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg card">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">YouTube Video Editing</h3>
           <p class="text-gray-600 dark:text-gray-300">Professional editing with seamless cuts, transitions, and sound design to maximize viewer engagement.</p>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg card">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Thumbnail Design</h3>
           <p class="text-gray-600 dark:text-gray-300">Vibrant, click-worthy thumbnails crafted to boost your video’s click-through rate.</p>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg card">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reels/Shorts Editing</h3>
           <p class="text-gray-600 dark:text-gray-300">Dynamic, fast-paced edits optimized for Instagram Reels, TikTok, and YouTube Shorts.</p>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg card">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Motion Graphics</h3>
           <p class="text-gray-600 dark:text-gray-300">Stunning animations and visual effects to elevate your video content.</p>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg card">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Promo Videos</h3>
           <p class="text-gray-600 dark:text-gray-300">Custom promotional videos tailored for businesses, products, or personal brands.</p>
         </div>
@@ -155,7 +211,7 @@
     <div class="container mx-auto px-6 fade-in">
       <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">Portfolio</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden card">
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
           <div class="aspect-w-16 aspect-h-9">
             <iframe src="https://www.youtube.com/embed/LtUJMvQv9TE" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
           </div>
@@ -164,7 +220,7 @@
             <p class="text-gray-600 dark:text-gray-300">A motivational study video edited with Adobe Premiere Pro, featuring seamless transitions and vibrant color grading to engage a broad audience.</p>
           </div>
         </div>
-        <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden card">
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
           <div class="aspect-w-16 aspect-h-9">
             <iframe src="https://www.youtube.com/embed/QvYLc1nEo2U" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
           </div>
@@ -204,15 +260,15 @@
         <div hx-post="/submit" hx-swap="outerHTML" class="space-y-6">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-300">Name</label>
-            <input type="text" id="name" name="name" class="w-full p-4 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required aria-required="true">
+            <input type="text" id="name" name="name" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
-            <input type="email" id="email" name="email" class="w-full p-4 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required aria-required="true">
+            <input type="email" id="email" name="email" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
           </div>
           <div>
-            <label for="project" class="block text-sm font-medium text-gray-300">Project Type</label>
-            <select id="project" name="project" class="w-full p-4 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label for="project" class="block text-sm font-medium text-gray-300">Project Geleba Type</label>
+            <select id="project" name="project" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none">
               <option>YouTube Video Editing</option>
               <option>Thumbnail Design</option>
               <option>Reels/Shorts Editing</option>
@@ -222,19 +278,19 @@
           </div>
           <div>
             <label for="message" class="block text-sm font-medium text-gray-300">Message</label>
-            <textarea id="message" name="message" rows="5" class="w-full p-4 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required aria-required="true"></textarea>
+            <textarea id="message" name="message" rows="5" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true"></textarea>
           </div>
-          <button type="submit" class="w-full bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold btn-primary">Send Message</button>
+          <button type="submit" class="w-full btn-primary text-white px-6 py-4 rounded-lg font-semibold">Send Message</button>
         </div>
       </div>
       <div class="flex justify-center space-x-8 mt-10">
-        <a href="https://youtube.com" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors" aria-label="YouTube Profile">
+        <a href="https://youtube.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="YouTube Profile">
           <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1.1-1.8-2.1-2.1C19.3 3.5 12 3.5 12 3.5s-7.3 0-9.4.6c-1 .3-1.8 1.1-2.1 2.1C0 8.4 0 12 0 12s0 3.6.5 5.8c.3 1 1.1 1.8 2.1 2.1 2.1.6 9.4.6 9.4.6s7.3 0 9.4-.6c1-.3 1.8-1.1 2.1-2.1.5-2.2.5-5.8.5-5.8s0-3.6-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/></svg>
         </a>
-        <a href="https://linkedin.com" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors" aria-label="LinkedIn Profile">
+        <a href="https://linkedin.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="LinkedIn Profile">
           <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.2A1.8 1.8 0 114.7 6.4a1.8 1.8 0 011.8 1.8zM19 19h-3v-4.6c0-1.1-.4-1.9-1.4-1.9-.8 0-1.2.5-1.4 1V19h-3v-9h3v1.2c.4-.6 1.1-1.4 2.7-1.4 2 0 3.4 1.3 3.4 4z"/></svg>
         </a>
-        <a href="https://telegram.org" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors" aria-label="Telegram Profile">
+        <a href="https://telegram.org" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="Telegram Profile">
           <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.6 7.4l-1.7 8c-.1.4-.5.6-.9.4l-2.3-1.7-1.3.8c-.2.1-.4.1-.6-.1l.9-3.1 5.7-5.2c.4-.3.1-.8-.4-.5l-7 5-2.3-2.3c-.3-.3-.1-.8.3-.9l9.3-3.6c.4-.1.8.2.8.7z"/></svg>
         </a>
       </div>
@@ -278,4 +334,62 @@
       current = (current + 1) % testimonials.length;
       testimonials[current].classList.remove('hidden');
     }, 5000);
+
+    // Particle Animation for Hero Background
+    const canvas = document.querySelector('.particle-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.05;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(248, 250, 252, 0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].size <= 0.2) {
+          particles.splice(i, 1);
+          i--;
+          particles.push(new Particle());
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
