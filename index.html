@@ -452,3 +452,911 @@
       canvas.height = window.innerHeight;
     });
   </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sisay Derese - Creative Video Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hero-bg {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3a8a 0%, #06b6d4 100%);
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' opacity='0.1'%3E%3Cpath fill='%23f8fafc' d='M50 50l50 50-50 50 50-50 50 50-50-50 50-50-50 50z'/%3E%3Ccircle cx='150' cy='50' r='10' fill='%23f8fafc'/%3E%3Crect x='20' y='180' width='60' height='10' fill='%23f8fafc'/%3E%3C/svg%3E");
+      animation: slide 30s linear infinite;
+      z-index: 1;
+    }
+    .name-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .name-text {
+      position: absolute;
+      color: rgba(248, 250, 252, 0.15);
+      font-size: 1.5rem;
+      font-weight: 300;
+      white-space: nowrap;
+      animation: drift 20s linear infinite, fade 5s ease-in-out infinite alternate;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, 50px); }
+    }
+    @keyframes fade {
+      0% { opacity: 0.15; }
+      100% { opacity: 0.05; }
+    }
+    .particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+    }
+    .hero-content, .services-content {
+      position: relative;
+      z-index: 4;
+    }
+    .headshot {
+      border: 6px solid #f8fafc;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+    .hero-text {
+      animation: slideIn 1s ease-out;
+    }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .services-bg {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .services-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' opacity='0.15'%3E%3Cpath fill='%2306b6d4' d='M50 50l20 20-20 20 20-20 20 20-20-20 20-20-20 20z'/%3E%3Cpath fill='%23f43f5e' d='M200 80l-40 40 40 40-40-40-40 40 40-40-40-40 40 40z'/%3E%3Ccircle cx='250' cy='50' r='15' fill='%231e3a8a'/%3E%3Crect x='30' y='250' width='80' height='15' fill='%2306b6d4'/%3E%3Cpath fill='%23f43f5e' d='M150 200l20-40h40l20 40z'/%3E%3C/svg%3E");
+      animation: float-bg 25s linear infinite;
+      z-index: 1;
+    }
+    @keyframes slide {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-100px) translateY(-100px); }
+    }
+    @keyframes float-bg {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
+    }
+    .section-bg {
+      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
+    }
+    .nav-bg {
+      background: #f8fafc;
+    }
+    .nav-link {
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #06b6d4;
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #ffffff;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    .btn-primary {
+      background-color: #f43f5e;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #e11d48;
+      transform: translateY(-2px);
+    }
+    .accent-text {
+      color: #06b6d4;
+    }
+    .input-field {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+    .dark .nav-bg {
+      background: #1e293b;
+    }
+    .dark .card {
+      background: #1e293b;
+    }
+    .dark .services-bg {
+      background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+    }
+    .dark .input-field {
+      background: #1e293b;
+      border-color: #4b5563;
+    }
+    .dark .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Navigation Bar -->
+  <nav class="nav-bg dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-gray-900 dark:text-white">Sisay Derese</a>
+      <div class="space-x-6">
+        <a href="#about" class="text-gray-600 dark:text-gray-300 nav-link">About</a>
+        <a href="#services" class="text-gray-600 dark:text-gray-300 nav-link">Services</a>
+        <a href="#portfolio" class="text-gray-600 dark:text-gray-300 nav-link">Portfolio</a>
+        <a href="#testimonials" class="text-gray-600 dark:text-gray-300 nav-link">Testimonials</a>
+        <a href="#contact" class="text-gray-600 dark:text-gray-300 nav-link">Contact</a>
+      </div>
+      <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">
+        <svg class="w-5 h-5 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-bg min-h-screen flex items-center justify-center py-16">
+    <canvas class="particle-canvas"></canvas>
+    <div class="name-overlay">
+      <span class="name-text" style="top: 10%; left: 5%; animation-delay: 0s;">Sisay Derese</span>
+      <span class="name-text" style="top: 20%; left: 60%; animation-delay: 2s;">Sisay Derese</span>
+      <span class="name-text" style="top: 30%; left: 20%; animation-delay: 4s;">Sisay Derese</span>
+      <span class="name-text" style="top: 40%; left: 80%; animation-delay: 6s;">Sisay Derese</span>
+      <span class="name-text" style="top: 50%; left: 10%; animation-delay: 8s;">Sisay Derese</span>
+      <span class="name-text" style="top: 60%; left: 70%; animation-delay: 10s;">Sisay Derese</span>
+      <span class="name-text" style="top: 70%; left: 30%; animation-delay: 12s;">Sisay Derese</span>
+      <span class="name-text" style="top: 80%; left: 90%; animation-delay: 14s;">Sisay Derese</span>
+      <span class="name-text" style="top: 90%; left: 40%; animation-delay: 16s;">Sisay Derese</span>
+    </div>
+    <div class="container mx-auto px-6 text-center hero-content fade-in">
+      <img src="6030555592130676104 (2).jpg" alt="Sisay Derese Headshot" class="w-40 h-40 md:w-56 md:h-56 rounded-full mx-auto mb-8 headshot">
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 hero-text">Sisay Derese</h1>
+      <p class="text-lg md:text-2xl text-gray-100 mb-8 hero-text">Creative <span class="accent-text">Video Editor</span> & YouTube Content Creator</p>
+      <a href="#portfolio" class="inline-block btn-primary text-white px-8 py-3 rounded-full font-semibold">View My Work</a>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section id="about" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">About Me</h2>
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+          I'm Sisay Derese, a dedicated <span class="accent-text">video editor</span> and YouTube content creator with over 5 years of experience crafting compelling visual stories. My expertise lies in transforming raw footage into polished, high-impact videos that captivate audiences worldwide.
+        </p>
+        <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+          Specializing in YouTube video editing, motion graphics, and short-form content like Reels and Shorts, I leverage tools like Adobe Premiere Pro, After Effects, and CapCut to deliver <span class="accent-text">creative and precise</span> results. My work is driven by a passion for storytelling and a commitment to excellence.
+        </p>
+        <p class="text-lg text-gray-300 leading-relaxed">
+          I take a collaborative, client-focused approach, ensuring every project aligns with your brand and vision. Let’s create something <span class="accent-text">extraordinary</span> together!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 services-bg dark:bg-gray-800">
+    <div class="container mx-auto px-6 fade-in services-content">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">YouTube Video Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Professional editing with seamless cuts, transitions, and sound design to maximize viewer engagement.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Thumbnail Design</h3>
+          <p class="text-gray-600 dark:text-gray-300">Vibrant, click-worthy thumbnails crafted to boost your video’s click-through rate.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reels/Shorts Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Dynamic, fast-paced edits optimized for Instagram Reels, TikTok, and YouTube Shorts.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Motion Graphics</h3>
+          <p class="text-gray-600 dark:text-gray-300">Stunning animations and visual effects to elevate your video content.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Promo Videos</h3>
+          <p class="text-gray-600 dark:text-gray-300">Custom promotional videos tailored for businesses, products, or personal brands.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/LtUJMvQv9TE" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Dynamic YouTube Educational</h3>
+            <p class="text-gray-600 dark:text-gray-300">A motivational study video edited with Adobe Premiere Pro, featuring seamless transitions and vibrant color grading to engage a broad audience.</p>
+          </div>
+        </div>
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/QvYLc1nEo2U" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Computer Science Experience</h3>
+            <p class="text-gray-600 dark:text-gray-300">A fast-paced YouTube video edited in CapCut with motion graphics from After Effects, designed to maximize viewer retention.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Testimonials</h2>
+      <div class="max-w-3xl mx-auto text-center">
+        <div id="testimonial-slider" class="space-y-8">
+          <div class="testimonial">
+            <p class="text-lg italic text-gray-600 dark:text-gray-300">"Sisay’s editing transformed my YouTube channel. His creativity and attention to detail are exceptional!"</p>
+            <p class="mt-4 font-semibold text-gray-900 dark:text-white">– Alex M., YouTube Creator</p>
+          </div>
+          <div class="testimonial hidden">
+            <p class="text-lg italic text-gray-600 dark:text-gray-300">"The promo video Sisay created for my business was professional and engaging. Highly recommend!"</p>
+            <p class="mt-4 font-semibold text-gray-900 dark:text-white">– Sarah K., Small Business Owner</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">Get in Touch</h2>
+      <div class="max-w-lg mx-auto">
+        <div hx-post="/submit" hx-swap="outerHTML" class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-300">Name</label>
+            <input type="text" id="name" name="name" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+            <input type="email" id="email" name="email" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
+          </div>
+          <div>
+            <label for="project" class="block text-sm font-medium text-gray-300">Project Type</label>
+            <select id="project" name="project" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none">
+              <option>YouTube Video Editing</option>
+              <option>Thumbnail Design</option>
+              <option>Reels/Shorts Editing</option>
+              <option>Motion Graphics</option>
+              <option>Freelance Promo Videos</option>
+            </select>
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-300">Message</label>
+            <textarea id="message" name="message" rows="5" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true"></textarea>
+          </div>
+          <button type="submit" class="w-full btn-primary text-white px-6 py-4 rounded-lg font-semibold">Send Message</button>
+        </div>
+      </div>
+      <div class="flex justify-center space-x-8 mt-10">
+        <a href="https://youtube.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="YouTube Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1.1-1.8-2.1-2.1C19.3 3.5 12 3.5 12 3.5s-7.3 0-9.4.6c-1 .3-1.8 1.1-2.1 2.1C0 8.4 0 12 0 12s0 3.6.5 5.8c.3 1 1.1 1.8 2.1 2.1 2.1.6 9.4.6 9.4.6s7.3 0 9.4-.6c1-.3 1.8-1.1 2.1-2.1.5-2.2.5-5.8.5-5.8s0-3.6-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/></svg>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="LinkedIn Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.2A1.8 1.8 0 114.7 6.4a1.8 1.8 0 011.8 1.8zM19 19h-3v-4.6c0-1.1-.4-1.9-1.4-1.9-.8 0-1.2.5-1.4 1V19h-3v-9h3v1.2c.4-.6 1.1-1.4 2.7-1.4 2 0 3.4 1.3 3.4 4z"/></svg>
+        </a>
+        <a href="https://telegram.org" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="Telegram Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.6 7.4l-1.7 8c-.1.4-.5.6-.9.4l-2.3-1.7-1.3.8c-.2.1-.4.1-.6-.1l.9-3.1 5.7-5.2c.4-.3.1-.8-.4-.5l-7 5-2.3-2.3c-.3-.3-.1-.8.3-.9l9.3-3.6c.4-.1.8.2.8.7z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 bg-gray-900 text-gray-400 text-center">
+    <p>© 2025 Sisay Derese. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Dark/Light Mode Toggle
+    const toggleButton = document.getElementById('theme-toggle');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Load theme from localStorage
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    // Fade-in animations on scroll
+    const fadeIns = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeIns.forEach(element => observer.observe(element));
+
+    // Testimonial Slider
+    const testimonials = document.querySelectorAll('.testimonial');
+    let current = 0;
+    setInterval(() => {
+      testimonials[current].classList.add('hidden');
+      current = (current + 1) % testimonials.length;
+      testimonials[current].classList.remove('hidden');
+    }, 5000);
+
+    // Particle Animation for Hero Background
+    const canvas = document.querySelector('.particle-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.05;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(248, 250, 252, 0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].size <= 0.2) {
+          particles.splice(i, 1);
+          i--;
+          particles.push(new Particle());
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sisay Derese - Creative Video Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hero-bg {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3a8a 0%, #06b6d4 100%);
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' opacity='0.1'%3E%3Cpath fill='%23f8fafc' d='M50 50l50 50-50 50 50-50 50 50-50-50 50-50-50 50z'/%3E%3Ccircle cx='150' cy='50' r='10' fill='%23f8fafc'/%3E%3Crect x='20' y='180' width='60' height='10' fill='%23f8fafc'/%3E%3C/svg%3E");
+      animation: slide 30s linear infinite;
+      z-index: 1;
+    }
+    .name-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .name-text {
+      position: absolute;
+      color: rgba(248, 250, 252, 0.15);
+      font-size: 1.5rem;
+      font-weight: 300;
+      white-space: nowrap;
+      animation: drift 20s linear infinite, fade 5s ease-in-out infinite alternate;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, 50px); }
+    }
+    @keyframes fade {
+      0% { opacity: 0.15; }
+      100% { opacity: 0.05; }
+    }
+    .particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+    }
+    .hero-content, .services-content {
+      position: relative;
+      z-index: 4;
+    }
+    .headshot {
+      border: 6px solid #f8fafc;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+    .hero-text {
+      animation: slideIn 1s ease-out;
+    }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .services-bg {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .services-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' opacity='0.15'%3E%3Cpath fill='%2306b6d4' d='M50 50l20 20-20 20 20-20 20 20-20-20 20-20-20 20z'/%3E%3Cpath fill='%23f43f5e' d='M200 80l-40 40 40 40-40-40-40 40 40-40-40-40 40 40z'/%3E%3Ccircle cx='250' cy='50' r='15' fill='%231e3a8a'/%3E%3Crect x='30' y='250' width='80' height='15' fill='%2306b6d4'/%3E%3Cpath fill='%23f43f5e' d='M150 200l20-40h40l20 40z'/%3E%3C/svg%3E");
+      animation: float-bg 25s linear infinite;
+      z-index: 1;
+    }
+    @keyframes slide {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-100px) translateY(-100px); }
+    }
+    @keyframes float-bg {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
+    }
+    .section-bg {
+      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
+    }
+    .nav-bg {
+      background: #f8fafc;
+    }
+    .nav-link {
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #06b6d4;
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #ffffff;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    .btn-primary {
+      background-color: #f43f5e;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #e11d48;
+      transform: translateY(-2px);
+    }
+    .accent-text {
+      color: #06b6d4;
+    }
+    .input-field {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+    .dark .nav-bg {
+      background: #1e293b;
+    }
+    .dark .card {
+      background: #1e293b;
+    }
+    .dark .services-bg {
+      background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+    }
+    .dark .input-field {
+      background: #1e293b;
+      border-color: #4b5563;
+    }
+    .dark .input-field:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Navigation Bar -->
+  <nav class="nav-bg dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-gray-900 dark:text-white">Sisay Derese</a>
+      <div class="space-x-6">
+        <a href="#about" class="text-gray-600 dark:text-gray-300 nav-link">About</a>
+        <a href="#services" class="text-gray-600 dark:text-gray-300 nav-link">Services</a>
+        <a href="#portfolio" class="text-gray-600 dark:text-gray-300 nav-link">Portfolio</a>
+        <a href="#testimonials" class="text-gray-600 dark:text-gray-300 nav-link">Testimonials</a>
+        <a href="#contact" class="text-gray-600 dark:text-gray-300 nav-link">Contact</a>
+      </div>
+      <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">
+        <svg class="w-5 h-5 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-bg min-h-screen flex items-center justify-center py-16">
+    <canvas class="particle-canvas"></canvas>
+    <div class="name-overlay">
+      <span class="name-text" style="top: 10%; left: 5%; animation-delay: 0s;">Sisay Derese</span>
+      <span class="name-text" style="top: 20%; left: 60%; animation-delay: 2s;">Sisay Derese</span>
+      <span class="name-text" style="top: 30%; left: 20%; animation-delay: 4s;">Sisay Derese</span>
+      <span class="name-text" style="top: 40%; left: 80%; animation-delay: 6s;">Sisay Derese</span>
+      <span class="name-text" style="top: 50%; left: 10%; animation-delay: 8s;">Sisay Derese</span>
+      <span class="name-text" style="top: 60%; left: 70%; animation-delay: 10s;">Sisay Derese</span>
+      <span class="name-text" style="top: 70%; left: 30%; animation-delay: 12s;">Sisay Derese</span>
+      <span class="name-text" style="top: 80%; left: 90%; animation-delay: 14s;">Sisay Derese</span>
+      <span class="name-text" style="top: 90%; left: 40%; animation-delay: 16s;">Sisay Derese</span>
+    </div>
+    <div class="container mx-auto px-6 text-center hero-content fade-in">
+      <img src="6030555592130676104 (2).jpg" alt="Sisay Derese Headshot" class="w-40 h-40 md:w-56 md:h-56 rounded-full mx-auto mb-8 headshot">
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 hero-text">Sisay Derese</h1>
+      <p class="text-lg md:text-2xl text-gray-100 mb-8 hero-text">Creative <span class="accent-text">Video Editor</span> & YouTube Content Creator</p>
+      <a href="#portfolio" class="inline-block btn-primary text-white px-8 py-3 rounded-full font-semibold">View My Work</a>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section id="about" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">About Me</h2>
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+          I'm Sisay Derese, a dedicated <span class="accent-text">video editor</span> and YouTube content creator with over 5 years of experience crafting compelling visual stories. My expertise lies in transforming raw footage into polished, high-impact videos that captivate audiences worldwide.
+        </p>
+        <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+          Specializing in YouTube video editing, motion graphics, and short-form content like Reels and Shorts, I leverage tools like Adobe Premiere Pro, After Effects, and CapCut to deliver <span class="accent-text">creative and precise</span> results. My work is driven by a passion for storytelling and a commitment to excellence.
+        </p>
+        <p class="text-lg text-gray-300 leading-relaxed">
+          I take a collaborative, client-focused approach, ensuring every project aligns with your brand and vision. Let’s create something <span class="accent-text">extraordinary</span> together!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 services-bg dark:bg-gray-800">
+    <div class="container mx-auto px-6 fade-in services-content">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">YouTube Video Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Professional editing with seamless cuts, transitions, and sound design to maximize viewer engagement.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Thumbnail Design</h3>
+          <p class="text-gray-600 dark:text-gray-300">Vibrant, click-worthy thumbnails crafted to boost your video’s click-through rate.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reels/Shorts Editing</h3>
+          <p class="text-gray-600 dark:text-gray-300">Dynamic, fast-paced edits optimized for Instagram Reels, TikTok, and YouTube Shorts.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Motion Graphics</h3>
+          <p class="text-gray-600 dark:text-gray-300">Stunning animations and visual effects to elevate your video content.</p>
+        </div>
+        <div class="card dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Promo Videos</h3>
+          <p class="text-gray-600 dark:text-gray-300">Custom promotional videos tailored for businesses, products, or personal brands.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/LtUJMvQv9TE" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Dynamic YouTube Educational</h3>
+            <p class="text-gray-600 dark:text-gray-300">A motivational study video edited with Adobe Premiere Pro, featuring seamless transitions and vibrant color grading to engage a broad audience.</p>
+          </div>
+        </div>
+        <div class="card dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe src="https://www.youtube.com/embed/QvYLc1nEo2U" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Computer Science Experience</h3>
+            <p class="text-gray-600 dark:text-gray-300">A fast-paced YouTube video edited in CapCut with motion graphics from After Effects, designed to maximize viewer retention.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">Testimonials</h2>
+      <div class="max-w-3xl mx-auto text-center">
+        <div id="testimonial-slider" class="space-y-8">
+          <div class="testimonial">
+            <p class="text-lg italic text-gray-600 dark:text-gray-300">"Sisay’s editing transformed my YouTube channel. His creativity and attention to detail are exceptional!"</p>
+            <p class="mt-4 font-semibold text-gray-900 dark:text-white">– Alex M., YouTube Creator</p>
+          </div>
+          <div class="testimonial hidden">
+            <p class="text-lg italic text-gray-600 dark:text-gray-300">"The promo video Sisay created for my business was professional and engaging. Highly recommend!"</p>
+            <p class="mt-4 font-semibold text-gray-900 dark:text-white">– Sarah K., Small Business Owner</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 section-bg">
+    <div class="container mx-auto px-6 fade-in">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-10">Get in Touch</h2>
+      <div class="max-w-lg mx-auto">
+        <div hx-post="/submit" hx-swap="outerHTML" class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-300">Name</label>
+            <input type="text" id="name" name="name" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+            <input type="email" id="email" name="email" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true">
+          </div>
+          <div>
+            <label for="project" class="block text-sm font-medium text-gray-300">Project Type</label>
+            <select id="project" name="project" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none">
+              <option>YouTube Video Editing</option>
+              <option>Thumbnail Design</option>
+              <option>Reels/Shorts Editing</option>
+              <option>Motion Graphics</option>
+              <option>Freelance Promo Videos</option>
+            </select>
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-300">Message</label>
+            <textarea id="message" name="message" rows="5" class="input-field dark:bg-gray-700 w-full p-4 rounded-lg border focus:outline-none" required aria-required="true"></textarea>
+          </div>
+          <button type="submit" class="w-full btn-primary text-white px-6 py-4 rounded-lg font-semibold">Send Message</button>
+        </div>
+      </div>
+      <div class="flex justify-center space-x-8 mt-10">
+        <a href="https://youtube.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="YouTube Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1.1-1.8-2.1-2.1C19.3 3.5 12 3.5 12 3.5s-7.3 0-9.4.6c-1 .3-1.8 1.1-2.1 2.1C0 8.4 0 12 0 12s0 3.6.5 5.8c.3 1 1.1 1.8 2.1 2.1 2.1.6 9.4.6 9.4.6s7.3 0 9.4-.6c1-.3 1.8-1.1 2.1-2.1.5-2.2.5-5.8.5-5.8s0-3.6-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/></svg>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="LinkedIn Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.2A1.8 1.8 0 114.7 6.4a1.8 1.8 0 011.8 1.8zM19 19h-3v-4.6c0-1.1-.4-1.9-1.4-1.9-.8 0-1.2.5-1.4 1V19h-3v-9h3v1.2c.4-.6 1.1-1.4 2.7-1.4 2 0 3.4 1.3 3.4 4z"/></svg>
+        </a>
+        <a href="https://telegram.org" target="_blank" class="text-gray-400 hover:text-cyan-500 transition-colors" aria-label="Telegram Profile">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.6 7.4l-1.7 8c-.1.4-.5.6-.9.4l-2.3-1.7-1.3.8c-.2.1-.4.1-.6-.1l.9-3.1 5.7-5.2c.4-.3.1-.8-.4-.5l-7 5-2.3-2.3c-.3-.3-.1-.8.3-.9l9.3-3.6c.4-.1.8.2.8.7z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 bg-gray-900 text-gray-400 text-center">
+    <p>© 2025 Sisay Derese. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Dark/Light Mode Toggle
+    const toggleButton = document.getElementById('theme-toggle');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Load theme from localStorage
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    // Fade-in animations on scroll
+    const fadeIns = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeIns.forEach(element => observer.observe(element));
+
+    // Testimonial Slider
+    const testimonials = document.querySelectorAll('.testimonial');
+    let current = 0;
+    setInterval(() => {
+      testimonials[current].classList.add('hidden');
+      current = (current + 1) % testimonials.length;
+      testimonials[current].classList.remove('hidden');
+    }, 5000);
+
+    // Particle Animation for Hero Background
+    const canvas = document.querySelector('.particle-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.05;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(248, 250, 252, 0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].size <= 0.2) {
+          particles.splice(i, 1);
+          i--;
+          particles.push(new Particle());
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
