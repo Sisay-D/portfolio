@@ -49,7 +49,7 @@
     .name-text {
       position: absolute;
       color: rgba(248, 250, 252, 0.15);
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       font-weight: 300;
       white-space: nowrap;
       animation: drift 20s linear infinite, fade 5s ease-in-out infinite alternate;
@@ -174,6 +174,86 @@
       border-color: #06b6d4;
       box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
     }
+    /* Hamburger Menu */
+    #nav-toggle {
+      display: none;
+    }
+    .nav-menu {
+      display: flex;
+    }
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #f8fafc;
+        padding: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .dark .nav-menu {
+        background: #1e293b;
+      }
+      .nav-menu.active {
+        display: flex;
+      }
+      #nav-toggle {
+        display: block;
+        cursor: pointer;
+      }
+      .nav-link {
+        padding: 0.5rem 0;
+        text-align: center;
+      }
+    }
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .hero-content h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+      .hero-content p {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+      }
+      .headshot {
+        width: clamp(8rem, 20vw, 12rem);
+        height: clamp(8rem, 20vw, 12rem);
+      }
+      .name-text {
+        font-size: clamp(0.8rem, 1.5vw, 1rem);
+      }
+    }
+    @media (max-width: 768px) {
+      .grid-cols-3, .grid-cols-2 {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .name-overlay {
+        display: none; /* Hide name overlay on small screens to avoid clutter */
+      }
+      .services-bg::before {
+        background-size: 200px; /* Scale down background pattern */
+      }
+    }
+    @media (max-width: 640px) {
+      .hero-content h1 {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+      }
+      .hero-content p {
+        font-size: clamp(0.875rem, 4vw, 1.125rem);
+      }
+      .btn-primary {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+      }
+      .card {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -181,7 +261,12 @@
   <nav class="nav-bg dark:bg-gray-800 shadow-lg sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <a href="#" class="text-2xl font-bold text-gray-900 dark:text-white">Sisay Derese</a>
-      <div class="space-x-6">
+      <button id="nav-toggle" class="p-2 rounded-md bg-gray-200 dark:bg-gray-700 md:hidden" aria-label="Toggle navigation">
+        <svg class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <div class="nav-menu space-x-6 md:space-x-6">
         <a href="#about" class="text-gray-600 dark:text-gray-300 nav-link">About</a>
         <a href="#services" class="text-gray-600 dark:text-gray-300 nav-link">Services</a>
         <a href="#portfolio" class="text-gray-600 dark:text-gray-300 nav-link">Portfolio</a>
@@ -373,6 +458,13 @@
     if (localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark');
     }
+
+    // Hamburger Menu Toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    navToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+    });
 
     // Fade-in animations on scroll
     const fadeIns = document.querySelectorAll('.fade-in');
